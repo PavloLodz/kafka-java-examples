@@ -20,7 +20,7 @@ import static org.awaitility.Awaitility.await;
 @ActiveProfiles("test")
 @EmbeddedKafka(partitions = 1, topics = {"orders-topic"})
 @DirtiesContext
-class ConsumerIntegrationTest {
+class ConsumerIT {
 
   @Autowired
   private KafkaTemplate<String, Order> kafkaTemplate;
