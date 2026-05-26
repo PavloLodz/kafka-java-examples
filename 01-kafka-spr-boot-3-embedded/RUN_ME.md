@@ -26,4 +26,4 @@
    mvn clean verify
    ```
 
-Access Kafbat UI at http://localhost:9000
+Access Kafbat UI at http://localhost:8080
