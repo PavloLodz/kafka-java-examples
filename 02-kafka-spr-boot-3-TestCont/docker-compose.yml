@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      # Important: Use host.docker.internal for container-to-host communication
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafka-ui:  # Renamed for clarity
+    image: ghcr.io/kafbat/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"  # ← Host:9000 → Container:8080
+    environment:
+      #SERVER_PORT: 9000  # We changed the default 8080 port
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      # Optional: Enable dynamic config loading
+      DYNAMIC_CONFIG_ENABLED: "true"
+    depends_on:
+      - kafka

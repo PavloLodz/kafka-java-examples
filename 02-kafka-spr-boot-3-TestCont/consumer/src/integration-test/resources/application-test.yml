@@ -1,0 +1,21 @@
+# Integration-test application properties.
+#
+# The Kafka bootstrap-servers property is intentionally NOT set here.
+# @ServiceConnection in KafkaTestContainersConfig injects the container's
+# broker address automatically at runtime, so no hard-coded port is needed.
+#
+# Previously this file (or @EmbeddedKafka) would wire in:
+#   spring.kafka.bootstrap-servers: ${spring.embedded.kafka.brokers}
+# That line is no longer required with Testcontainers + ServiceConnection.
+
+spring:
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false   # send clean JSON, no type header needed since consumer trusts the package
+    consumer:
+      properties:
+        spring.json.value.default.type: pl.ldz.kafka.consumer.model.Order
+        spring.json.trusted.packages: pl.ldz.kafka.consumer.model
