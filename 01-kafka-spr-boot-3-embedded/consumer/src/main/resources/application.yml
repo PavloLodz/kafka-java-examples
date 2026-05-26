@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: consumer
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false   # serialize LocalDateTime as ISO-8601 string
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: pl.ldz.kafka.consumer.model
+    streams:
+      application-id: order-processing-app
+      bootstrap-servers: localhost:9092
+
+logging:
+  level:
+    org.apache.kafka: WARN

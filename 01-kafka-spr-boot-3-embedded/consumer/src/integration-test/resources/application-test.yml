@@ -1,0 +1,11 @@
+spring:
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false   # send clean JSON, no type header needed since consumer trusts the package
+    consumer:
+      properties:
+        spring.json.value.default.type: pl.ldz.kafka.consumer.model.Order
+        spring.json.trusted.packages: pl.ldz.kafka.consumer.model
