@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.ldz.kafka.common.dto.OrderEventDto;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -31,10 +32,11 @@ public class OutboxEventRelay {
   }
 
   @Scheduled(fixedDelay = 1000)
-  @Transactional
   public void relay() {
-    List<OutboxEvent> pending = outboxRepository
-        .findTop50ByStatusOrderByCreatedAtAsc(OutboxEvent.Status.NEW);
+    List<OutboxEvent> pending = fetchPending();
+    if (pending.isEmpty()) return;
+
+    List<OutboxEvent> toUpdate = new ArrayList<>();
 
     for (OutboxEvent event : pending) {
       try {
@@ -54,6 +56,19 @@ public class OutboxEventRelay {
               event.getId(), event.getRetryCount());
         }
       }
+      toUpdate.add(event);
     }
+
+    persistUpdates(toUpdate);
+  }
+
+  @Transactional(readOnly = true)
+  public List<OutboxEvent> fetchPending() {
+    return outboxRepository.findTop50ByStatusOrderByCreatedAtAsc(OutboxEvent.Status.NEW);
+  }
+
+  @Transactional
+  public void persistUpdates(List<OutboxEvent> events) {
+    outboxRepository.saveAll(events);
   }
 }
