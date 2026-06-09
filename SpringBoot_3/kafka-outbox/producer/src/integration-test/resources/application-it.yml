@@ -1,0 +1,10 @@
+# Integration-test profile "it"
+# spring.kafka.bootstrap-servers and spring.datasource.* are NOT set here —
+# ITSharedContainers injects them via @DynamicPropertySource at runtime.
+spring:
+  flyway:
+    enabled: true
+  kafka:
+    producer:
+      properties:
+        spring.json.add.type.headers: false
