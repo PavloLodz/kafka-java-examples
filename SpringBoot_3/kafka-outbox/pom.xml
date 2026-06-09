@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.14</version>
+    <version>3.5.13</version>
     <relativePath/>
   </parent>
 
@@ -29,6 +29,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <integration-test.source.dir>src/integration-test/java</integration-test.source.dir>
     <integration-test.resource.dir>src/integration-test/resources</integration-test.resource.dir>
+    <testcontainers-bom.version>2.0.5</testcontainers-bom.version>
+    <spring-boot-dependencies.version>3.5.13</spring-boot-dependencies.version>
   </properties>
 
   <dependencyManagement>
@@ -38,18 +40,20 @@
         <artifactId>common</artifactId>
         <version>${project.version}</version>
       </dependency>
+
       <!-- Re-import Spring Boot BOM so child modules can resolve spring-boot-* versions -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.3.2</version>
+        <version>${spring-boot-dependencies.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
       <dependency>
         <groupId>org.testcontainers</groupId>
         <artifactId>testcontainers-bom</artifactId>
-        <version>2.0.5</version>
+        <version>${testcontainers-bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
