@@ -3,6 +3,7 @@ package pl.ldz.kafka.producer.outbox;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,18 +23,21 @@ public class OutboxEventRelay {
   private final OutboxEventRepository outboxRepository;
   private final KafkaTemplate<String, OrderEventDto> kafkaTemplate;
   private final ObjectMapper objectMapper;
+  private final OutboxEventRelay self;
 
   public OutboxEventRelay(OutboxEventRepository outboxRepository,
                           KafkaTemplate<String, OrderEventDto> kafkaTemplate,
-                          ObjectMapper objectMapper) {
+                          ObjectMapper objectMapper,
+                          @Lazy OutboxEventRelay self) {
     this.outboxRepository = outboxRepository;
     this.kafkaTemplate = kafkaTemplate;
     this.objectMapper = objectMapper;
+    this.self = self;
   }
 
   @Scheduled(fixedDelay = 1000)
   public void relay() {
-    List<OutboxEvent> pending = fetchPending();
+    List<OutboxEvent> pending = self.fetchPending();
     if (pending.isEmpty()) return;
 
     List<OutboxEvent> toUpdate = new ArrayList<>();
@@ -59,7 +63,7 @@ public class OutboxEventRelay {
       toUpdate.add(event);
     }
 
-    persistUpdates(toUpdate);
+    self.persistUpdates(toUpdate);
   }
 
   @Transactional(readOnly = true)
